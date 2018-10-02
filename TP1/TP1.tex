@@ -277,153 +277,15 @@
     
     \maketitle
     
-    
-
-    
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}1}]:} \PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
-        \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
-        \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
-        \PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
-        \PY{k+kn}{from} \PY{n+nn}{wordcloud} \PY{k}{import} \PY{n}{WordCloud}
-        \PY{k+kn}{import} \PY{n+nn}{warnings}
-        \PY{n}{warnings}\PY{o}{.}\PY{n}{filterwarnings}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ignore}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{style}\PY{o}{.}\PY{n}{use}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{default}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}2}]:} \PY{n}{datos} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{events.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{low\PYZus{}memory}\PY{o}{=} \PY{k+kc}{False}\PY{p}{)}
-        \PY{n}{datos}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-<class 'pandas.core.frame.DataFrame'>
-RangeIndex: 1011288 entries, 0 to 1011287
-Data columns (total 23 columns):
-timestamp                   1011288 non-null object
-event                       1011288 non-null object
-person                      1011288 non-null object
-url                         82756 non-null object
-sku                         563838 non-null object
-model                       564284 non-null object
-condition                   563836 non-null object
-storage                     563836 non-null object
-color                       563836 non-null object
-skus                        221699 non-null object
-search\_term                 48967 non-null object
-staticpage                  3598 non-null object
-campaign\_source             82796 non-null object
-search\_engine               50957 non-null object
-channel                     87378 non-null object
-new\_vs\_returning            87378 non-null object
-city                        87378 non-null object
-region                      87378 non-null object
-country                     87378 non-null object
-device\_type                 87378 non-null object
-screen\_resolution           87378 non-null object
-operating\_system\_version    87378 non-null object
-browser\_version             87378 non-null object
-dtypes: object(23)
-memory usage: 177.5+ MB
-
-    \end{Verbatim}
-
-    \hypertarget{paso-sku-a-numuxe9rico-porque-algunos-registros-tenuxedan-mismo-valor-pero-distinto-tipo-e.g.1090-y-1090.0}{%
-\paragraph{Paso ``sku'' a numérico porque algunos registros tenían mismo
-valor pero distinto tipo e.g.~1090 y
-1090.0}\label{paso-sku-a-numuxe9rico-porque-algunos-registros-tenuxedan-mismo-valor-pero-distinto-tipo-e.g.1090-y-1090.0}}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}3}]:} \PY{n}{datos} \PY{o}{=} \PY{n}{datos}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{by}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ascending}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-        \PY{n}{datos}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sku}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{to\PYZus{}numeric}\PY{p}{(}\PY{n}{datos}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sku}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{errors}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{coerce}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-    \hypertarget{creo-el-df-de-los-productos}{%
-\paragraph{Creo el DF de los
-productos}\label{creo-el-df-de-los-productos}}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}4}]:} \PY{n}{productos} \PY{o}{=} \PY{n}{datos}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sku}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{condition}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{storage}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{color}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{event}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{n}{subset}\PY{o}{=}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sku}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}
-        \PY{n}{productos}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-<class 'pandas.core.frame.DataFrame'>
-Int64Index: 563836 entries, 2 to 1011287
-Data columns (total 6 columns):
-sku          563836 non-null float64
-model        563836 non-null object
-condition    563836 non-null object
-storage      563836 non-null object
-color        563836 non-null object
-event        563836 non-null object
-dtypes: float64(1), object(5)
-memory usage: 30.1+ MB
-
-    \end{Verbatim}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}5}]:} \PY{n}{productos\PYZus{}comprados} \PY{o}{=} \PY{n}{productos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{productos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{checkout}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
-        \PY{n}{productos\PYZus{}vistos} \PY{o}{=} \PY{n}{productos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{productos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{viewed product}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
-\end{Verbatim}
-
-
-    \hypertarget{anuxe1lisis-exploratorio}{%
+\hypertarget{anuxe1lisis-exploratorio}{%
 \section{Análisis exploratorio}\label{anuxe1lisis-exploratorio}}
 
     \hypertarget{overview-del-set-de-datos}{%
 \subsection{Overview del set de datos}\label{overview-del-set-de-datos}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}6}]:} \PY{n}{datos}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
 
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}6}]:}              timestamp            event    person                        url  \textbackslash{}
-        0  2018-05-31 23:38:05  ad campaign hit  0004b0a2  /comprar/iphone/iphone-5s   
-        1  2018-05-31 23:38:05     visited site  0004b0a2                        NaN   
-        2  2018-05-31 23:38:09   viewed product  0004b0a2                        NaN   
-        3  2018-05-31 23:38:40         checkout  0004b0a2                        NaN   
-        4  2018-05-29 13:29:25   viewed product  0006a21a                        NaN   
-        
-               sku              model condition storage           color skus  \textbackslash{}
-        0      NaN                NaN       NaN     NaN             NaN  NaN   
-        1      NaN                NaN       NaN     NaN             NaN  NaN   
-        2   2694.0          iPhone 5s       Bom    32GB  Cinza espacial  NaN   
-        3   2694.0          iPhone 5s       Bom    32GB  Cinza espacial  NaN   
-        4  15338.0  Samsung Galaxy S8       Bom    64GB         Dourado  NaN   
-        
-                 {\ldots}        search\_engine channel new\_vs\_returning        city  \textbackslash{}
-        0        {\ldots}                  NaN     NaN              NaN         NaN   
-        1        {\ldots}                  NaN    Paid              New  Camaragibe   
-        2        {\ldots}                  NaN     NaN              NaN         NaN   
-        3        {\ldots}                  NaN     NaN              NaN         NaN   
-        4        {\ldots}                  NaN     NaN              NaN         NaN   
-        
-               region country device\_type screen\_resolution operating\_system\_version  \textbackslash{}
-        0         NaN     NaN         NaN               NaN                      NaN   
-        1  Pernambuco  Brazil  Smartphone           360x640                Android 6   
-        2         NaN     NaN         NaN               NaN                      NaN   
-        3         NaN     NaN         NaN               NaN                      NaN   
-        4         NaN     NaN         NaN               NaN                      NaN   
-        
-            browser\_version  
-        0               NaN  
-        1  Chrome Mobile 39  
-        2               NaN  
-        3               NaN  
-        4               NaN  
-        
-        [5 rows x 23 columns]
-\end{Verbatim}
-            
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}7}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{datos}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{datos}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
 \end{Verbatim}
 
 
@@ -432,13 +294,9 @@ memory usage: 30.1+ MB
 
     \end{Verbatim}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}8}]:} \PY{n}{datos}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-
-
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}8}]:} timestamp                         0
+\PY{n}{datos}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+        timestamp                         0
         event                             0
         person                            0
         url                          928532
@@ -473,8 +331,8 @@ información}\label{muchos-nulos.-staticpage-tiene-casi-todos-nulos.-no-aporta-n
 \paragraph{Eventos}\label{eventos}}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}9}]:} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}\PY{p}{:}
-            \PY{n+nb}{print} \PY{p}{(}\PY{n}{x}\PY{p}{)}
+ \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print} \PY{p}{(}\PY{n}{x}\PY{p}{)}
 \end{Verbatim}
 
 
@@ -498,29 +356,21 @@ lead
 producto}\label{condiciones-en-las-que-puede-encontrarse-un-producto}}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}10}]:} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}\PY{p}{:}
-             \PY{n+nb}{print} \PY{p}{(}\PY{n}{x}\PY{p}{)}
+\PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print} \PY{p}{(}\PY{n}{x}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
+    \PY{c+c1}{\PYZsh{} Las pasamos a español para que las visualizaciones se vean en español}
 nan
-Bom
-Muito Bom
+Bom \PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bien}\PY{l+s+s1}{\PYZsq{}}
+Muito Bom \PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Muy Bien}\PY{l+s+s1}{\PYZsq{}}
 Excelente
-Bom - Sem Touch ID
-Novo
+Bom - Sem Touch ID \PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bien - Sin Touch}\PY{l+s+s1}{\PYZsq{}}
+Novo \PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Nuevo}\PY{l+s+s1}{\PYZsq{}}
 
     \end{Verbatim}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}11}]:} \PY{c+c1}{\PYZsh{} Las pasamos a español para que las visualizaciones se vean en español}
-         \PY{n}{datos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bom}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bien}\PY{l+s+s1}{\PYZsq{}}
-         \PY{n}{datos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Muito Bom}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Muy Bien}\PY{l+s+s1}{\PYZsq{}}
-         \PY{n}{datos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bom \PYZhy{} Sem Touch ID}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bien \PYZhy{} Sin Touch ID}\PY{l+s+s1}{\PYZsq{}}
-         \PY{n}{datos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Novo}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Nuevo}\PY{l+s+s1}{\PYZsq{}}
-\end{Verbatim}
-
 
     \hypertarget{visualizaciones}{%
 \subsection{Visualizaciones}\label{visualizaciones}}
@@ -529,83 +379,17 @@ Novo
 \subsubsection{1. Las empresas publicitarias que más vistas
 generan}\label{las-empresas-publicitarias-que-muxe1s-vistas-generan}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}12}]:} \PY{c+c1}{\PYZsh{} Cantidad de eventos por campañas publicitarias}
-         \PY{n}{datos\PYZus{}campaign\PYZus{}source} \PY{o}{=} \PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{campaign\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}
-         \PY{n}{datos\PYZus{}campaign\PYZus{}source}
-         \PY{n}{datos}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{campaign\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{agg}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{campaign\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{count}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{campaign\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PYZbs{}
-                         \PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{campaign\PYZus{}source}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cantidad de visitas}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}12}]:}                   Cantidad de visitas
-         campaign\_source                      
-         google                          58153
-         criteo                           9694
-         rtbhouse                         8550
-         zanox                            1673
-         emblue                           1352
-         FacebookAds                       764
-         afilio                            692
-         bing                              484
-         voxus                             432
-         rakuten                           310
-         indexa                            154
-         buscape                           141
-         manifest                          126
-         Facebook                           77
-         datacrush                          60
-         blog                               37
-         afiliado                           34
-         yotpo                              25
-         mercadopago                        18
-         FacebookSocial                      8
-         MARKETING SOCIAL                    7
-         onsite                              3
-         Google Social                       1
-         socialmedia                         1
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}13}]:} \PY{n}{fig} \PY{o}{=}\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
-         \PY{n}{ax} \PY{o}{=} \PY{n}{datos\PYZus{}campaign\PYZus{}source}\PY{p}{[}\PY{p}{:}\PY{l+m+mi}{10}\PY{p}{]}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bar}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Las 10 empresas publicitarias que aportan más visitas}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-         \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Empresa publicitaria}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-         \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cantidad de avisos}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}13}]:} Text(0,0.5,'Cantidad de avisos')
-\end{Verbatim}
-            
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_21_1.png}
     \end{center}
-    { \hspace*{\fill} \\}
-    
     \hypertarget{modelos-muxe1s-visitados}{%
 \subsubsection{2. Modelos más
 visitados}\label{modelos-muxe1s-visitados}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}14}]:} \PY{n}{productos\PYZus{}vistos\PYZus{}cantidad\PYZus{}plot} \PY{o}{=} \PY{n}{productos\PYZus{}vistos}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{model}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{model}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}\PYZbs{}
-                     \PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ascending} \PY{o}{=} \PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{barh}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PYZbs{}
-                     \PY{p}{,}\PY{n}{rot}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Productos más vistos}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{legend}\PY{o}{=}\PY{k+kc}{None}\PY{p}{)}
-         \PY{n}{productos\PYZus{}vistos\PYZus{}cantidad\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cantidad de Visitas}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-         \PY{n}{productos\PYZus{}vistos\PYZus{}cantidad\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Modelo}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}14}]:} Text(0,0.5,'Modelo')
-\end{Verbatim}
-            
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_23_1.png}
     \end{center}
-    { \hspace*{\fill} \\}
-    
+
     \hypertarget{los-teluxe9fonos-muxe1s-buscados-son-los-iphone-y-los-samsung}{%
 \subparagraph{Los teléfonos más buscados son los iphone y los
 samsung}\label{los-teluxe9fonos-muxe1s-buscados-son-los-iphone-y-los-samsung}}
@@ -614,23 +398,9 @@ samsung}\label{los-teluxe9fonos-muxe1s-buscados-son-los-iphone-y-los-samsung}}
 \subsubsection{3. Modelos más
 comprados}\label{modelos-muxe1s-comprados}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}15}]:} \PY{n}{productos\PYZus{}comprados\PYZus{}cantidad\PYZus{}plot} \PY{o}{=} \PY{n}{productos\PYZus{}comprados}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{model}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{model}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}\PYZbs{}
-                 \PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ascending} \PY{o}{=} \PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{barh}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{,} \PY{n}{rot}\PY{o}{=}\PY{l+m+mi}{0}\PYZbs{}
-                 \PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Productos más comprados}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{legend}\PY{o}{=}\PY{k+kc}{None}\PY{p}{)}
-         \PY{n}{productos\PYZus{}comprados\PYZus{}cantidad\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Unidades vendidas}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-         \PY{n}{productos\PYZus{}comprados\PYZus{}cantidad\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Modelo}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}15}]:} Text(0,0.5,'Modelo')
-\end{Verbatim}
-            
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_26_1.png}
     \end{center}
-    { \hspace*{\fill} \\}
     
     \hypertarget{los-teluxe9fonos-muxe1s-comprados-son-los-iphone-seguidos-por-los-samsung}{%
 \subparagraph{Los teléfonos más comprados son los iphone, seguidos por
@@ -641,24 +411,10 @@ samsung}\label{los-teluxe9fonos-muxe1s-comprados-son-los-iphone-seguidos-por-los
 \subsubsection{4. Estado de los productos más
 comprados}\label{estado-de-los-productos-muxe1s-comprados}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}16}]:} \PY{n}{productos\PYZus{}comprados\PYZus{}estado\PYZus{}plot} \PY{o}{=} \PY{n}{productos\PYZus{}comprados}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}\PYZbs{}
-                 \PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ascending} \PY{o}{=} \PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bar}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{,} \PY{n}{rot}\PY{o}{=}\PY{l+m+mi}{0}\PYZbs{}
-                 \PY{p}{,}\PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{green}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Productos más comprados}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{legend}\PY{o}{=}\PY{k+kc}{None}\PY{p}{)}
-         \PY{n}{productos\PYZus{}comprados\PYZus{}estado\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Unidades vendidas}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-         \PY{n}{productos\PYZus{}comprados\PYZus{}estado\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Modelo}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}16}]:} Text(0,0.5,'Modelo')
-\end{Verbatim}
-            
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_29_1.png}
     \end{center}
-    { \hspace*{\fill} \\}
-    
+
     \hypertarget{la-gente-no-le-da-tanta-importancia-al-estado-del-teluxe9fono}{%
 \subparagraph{La gente no le da tanta importancia al estado del
 teléfono}\label{la-gente-no-le-da-tanta-importancia-al-estado-del-teluxe9fono}}
@@ -667,24 +423,11 @@ teléfono}\label{la-gente-no-le-da-tanta-importancia-al-estado-del-teluxe9fono}}
 \subsubsection{5. Estado de los productos más
 visitiados}\label{estado-de-los-productos-muxe1s-visitiados}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}17}]:} \PY{n}{productos\PYZus{}vistos\PYZus{}estado\PYZus{}plot} \PY{o}{=} \PY{n}{productos\PYZus{}vistos}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}\PYZbs{}
-                 \PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ascending} \PY{o}{=} \PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bar}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{,} \PY{n}{rot}\PY{o}{=}\PY{l+m+mi}{0}\PYZbs{}
-                 \PY{p}{,}\PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{green}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Productos más vistos}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{legend}\PY{o}{=}\PY{k+kc}{None}\PY{p}{)}
-         \PY{n}{productos\PYZus{}vistos\PYZus{}estado\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Vista}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-         \PY{n}{productos\PYZus{}vistos\PYZus{}estado\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Modelo}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}17}]:} Text(0,0.5,'Modelo')
-\end{Verbatim}
-            
+    
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_32_1.png}
     \end{center}
-    { \hspace*{\fill} \\}
-    
+
     \hypertarget{la-gente-no-le-da-tanta-importancia-al-estado-del-teluxe9fono}{%
 \subparagraph{La gente no le da tanta importancia al estado del
 teléfono}\label{la-gente-no-le-da-tanta-importancia-al-estado-del-teluxe9fono}}
@@ -693,25 +436,10 @@ teléfono}\label{la-gente-no-le-da-tanta-importancia-al-estado-del-teluxe9fono}}
 \subsubsection{6. Proporción de productos según el
 estado}\label{proporciuxf3n-de-productos-seguxfan-el-estado}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}18}]:} \PY{n}{catalogo} \PY{o}{=} \PY{n}{productos}\PY{o}{.}\PY{n}{drop\PYZus{}duplicates}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sku}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{k+kn}{from} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{import} \PY{n}{figure}
-         \PY{n}{figure}\PY{p}{(}\PY{n}{num}\PY{o}{=}\PY{k+kc}{None}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{,} \PY{n}{dpi}\PY{o}{=}\PY{l+m+mi}{80}\PY{p}{,} \PY{n}{facecolor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{w}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{edgecolor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{catalogo\PYZus{}plot} \PY{o}{=} \PY{n}{catalogo}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{p}{)}
-         \PY{n}{sizes} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{30}\PY{p}{,} \PY{l+m+mi}{45}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{]}
-         \PY{n}{explode} \PY{o}{=} \PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mf}{0.1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{)} 
-         \PY{n}{plt}\PY{o}{.}\PY{n}{pie}\PY{p}{(}\PY{n}{catalogo\PYZus{}plot}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{labels}\PY{o}{=}\PY{n}{catalogo\PYZus{}plot}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{condition}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{autopct}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZpc{}1.1f}\PY{l+s+si}{\PYZpc{}\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         
-         \PY{n}{plt}\PY{o}{.}\PY{n}{axis}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{equal}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-
-
+    
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_35_0.png}
     \end{center}
-    { \hspace*{\fill} \\}
     
     \hypertarget{hay-una-proporciuxf3n-equilibrada-de-teluxe9fonos-en-buen-muy-buen-y-excelente-estado.-las-tendencias-previamente-analizadas-no-responden-a-una-diferencia-de-oferta}{%
 \subparagraph{Hay una proporción equilibrada de teléfonos en buen, muy
@@ -727,23 +455,6 @@ importante}\label{el-estado-del-teluxe9fono-no-es-tan-importante}}
 \subsubsection{7. ¿A qué hora son más efectivas las
 publicidades?}\label{a-quuxe9-hora-son-muxe1s-efectivas-las-publicidades}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}19}]:} \PY{n}{publicidades} \PY{o}{=} \PY{n}{datos}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ad campaign hit}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{publicidades}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{publicidades}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{str}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{str}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
-         
-         
-         \PY{n}{publicidades\PYZus{}hora\PYZus{}plot} \PY{o}{=} \PY{n}{publicidades}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{p}{)}\PYZbs{}
-                                 \PY{o}{.}\PY{n}{plot}\PY{o}{.}\PY{n}{line}\PY{p}{(}\PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{legend}\PY{o}{=}\PY{k+kc}{None}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{,} \PY{n}{grid}\PY{o}{=}\PY{k+kc}{True}\PYZbs{}
-                                 \PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{,} \PY{n}{rot}\PY{o}{=}\PY{l+m+mi}{0} \PY{p}{,}\PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Horario vs Cantidad de Clicks en Publicidades}\PY{l+s+s1}{\PYZsq{}} \PY{p}{)}
-         \PY{n}{publicidades\PYZus{}hora\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Hora}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-         \PY{n}{publicidades\PYZus{}hora\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cantidad de Clicks en Publicidades}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}19}]:} Text(0,0.5,'Cantidad de Clicks en Publicidades')
-\end{Verbatim}
-            
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_39_1.png}
     \end{center}
@@ -765,82 +476,11 @@ algunas modificaciones este dataframe puede más adelante aportar
 información
 interesante.}\label{para-realizar-este-anuxe1lisis-se-creuxf3-un-nuevo-dataframe-de-sesiones-llamado-flujo_compra.-una-sesiuxf3n-registra-los-movimientos-de-un-usuario-en-un-peruxedodo-de-una-hora.-se-consideruxf3-que-como-muxe1ximo-una-sesiuxf3n-puede-durar-una-hora-es-decir-que-si-un-usuario-entra-a-la-puxe1gina-de-trocafone-en-un-mismo-duxeda-pero-en-distinto-horario-a-la-mauxf1ana-y-a-la-noche-generaruxe1-dos-registros-distintos.-si-bien-solo-estamos-considerando-el-evento-inicial-y-el-final-creemos-que-con-algunas-modificaciones-este-dataframe-puede-muxe1s-adelante-aportar-informaciuxf3n-interesante.}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}20}]:} \PY{k+kn}{from} \PY{n+nn}{datetime} \PY{k}{import} \PY{n}{datetime}
-         \PY{k}{def} \PY{n+nf}{mostrar}\PY{p}{(}\PY{n}{df}\PY{p}{)}\PY{p}{:}    
-             \PY{n}{rows} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-             \PY{n}{person} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}    
-             \PY{k}{for} \PY{n}{index}\PY{p}{,} \PY{n}{row} \PY{o+ow}{in} \PY{n}{df}\PY{o}{.}\PY{n}{iterrows}\PY{p}{(}\PY{p}{)}\PY{p}{:}  
-                 \PY{k}{if}\PY{p}{(}\PY{n}{person} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{:}
-                     \PY{n}{person} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{person}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
-                     \PY{n}{first\PYZus{}event\PYZus{}time} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{timestamp}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
-                     \PY{n}{first\PYZus{}event\PYZus{}name} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{event}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
-                     \PY{n}{final\PYZus{}event\PYZus{}time} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{timestamp}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
-                     \PY{n}{final\PYZus{}event\PYZus{}name} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{event}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}                        
-                     \PY{k}{continue}
-                 \PY{k}{if}\PY{p}{(}\PY{n}{person} \PY{o}{!=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{person}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o+ow}{or} \PY{p}{(}\PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{Y\PYZhy{}}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{m\PYZhy{}}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{H:}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{M:}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{S}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{datetime}\PY{o}{.}\PY{n}{strptime}\PY{p}{(}\PY{n}{first\PYZus{}event\PYZus{}time}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{Y\PYZhy{}}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{m\PYZhy{}}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{H:}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{M:}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{S}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{total\PYZus{}seconds}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{3600}\PY{p}{)}\PY{p}{:}                        
-                     \PY{n}{rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{[}\PY{n}{person}\PY{p}{,} \PY{n}{first\PYZus{}event\PYZus{}name}\PY{p}{,} \PY{n}{first\PYZus{}event\PYZus{}time}\PY{p}{,} \PY{n}{final\PYZus{}event\PYZus{}name}\PY{p}{,} \PY{n}{final\PYZus{}event\PYZus{}time}\PY{p}{]}\PY{p}{)}            
-                     \PY{n}{person} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{person}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
-                     \PY{n}{first\PYZus{}event\PYZus{}time} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{timestamp}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
-                     \PY{n}{first\PYZus{}event\PYZus{}name} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{event}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}    
-                     \PY{n}{final\PYZus{}event\PYZus{}time} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{timestamp}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
-                     \PY{n}{final\PYZus{}event\PYZus{}name} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{event}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}                        
-                 \PY{k}{else}\PY{p}{:}   
-                     \PY{n}{final\PYZus{}event\PYZus{}time} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{timestamp}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
-                     \PY{n}{final\PYZus{}event\PYZus{}name} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{event}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}                        
-             \PY{k}{return} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{rows}\PY{p}{,}\PY{n}{columns}\PY{o}{=}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{first\PYZus{}event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{first\PYZus{}event\PYZus{}time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{final\PYZus{}event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{final\PYZus{}event\PYZus{}time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}21}]:} \PY{n}{flujo\PYZus{}compra} \PY{o}{=} \PY{n}{mostrar}\PY{p}{(}\PY{n}{datos}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{by}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}22}]:} \PY{n}{flujo\PYZus{}compra} \PY{o}{=} \PY{n}{flujo\PYZus{}compra}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{flujo\PYZus{}compra}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{first\PYZus{}event\PYZus{}time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{!=} \PY{n}{flujo\PYZus{}compra}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{final\PYZus{}event\PYZus{}time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-         \PY{n}{flujo\PYZus{}compra}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-<class 'pandas.core.frame.DataFrame'>
-Int64Index: 77588 entries, 0 to 86543
-Data columns (total 5 columns):
-person              77588 non-null object
-first\_event         77588 non-null object
-first\_event\_time    77588 non-null object
-final\_event         77588 non-null object
-final\_event\_time    77588 non-null object
-dtypes: object(5)
-memory usage: 3.6+ MB
-
-    \end{Verbatim}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}23}]:} \PY{n}{termina\PYZus{}en\PYZus{}compra} \PY{o}{=} \PY{n}{flujo\PYZus{}compra}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{flujo\PYZus{}compra}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{final\PYZus{}event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{checkout}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}24}]:} \PY{n}{termina\PYZus{}en\PYZus{}compra}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{first\PYZus{}event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}
-         \PY{n}{eventos\PYZus{}compra\PYZus{}plot} \PY{o}{=} \PY{n}{termina\PYZus{}en\PYZus{}compra}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{first\PYZus{}event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{first\PYZus{}event\PYZus{}time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{first\PYZus{}event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}\PYZbs{}
-                 \PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{first\PYZus{}event\PYZus{}time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ascending} \PY{o}{=} \PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{barh}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{,} \PY{n}{rot}\PY{o}{=}\PY{l+m+mi}{0}\PYZbs{}
-                 \PY{p}{,}\PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{green}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Eventos que terminan en compra}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{legend}\PY{o}{=}\PY{k+kc}{None}\PY{p}{)}
-         \PY{n}{eventos\PYZus{}compra\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cantidad}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-         \PY{n}{eventos\PYZus{}compra\PYZus{}plot}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Evento}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}24}]:} Text(0,0.5,'Evento')
-\end{Verbatim}
-            
+    
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_46_1.png}
     \end{center}
-    { \hspace*{\fill} \\}
-    
+
     \hypertarget{observamos-que-la-mitad-de-las-ventas-se-llegan-mediante-publicidades}{%
 \subparagraph{Observamos que la mitad de las ventas se llegan mediante
 publicidades}\label{observamos-que-la-mitad-de-las-ventas-se-llegan-mediante-publicidades}}
@@ -849,83 +489,11 @@ publicidades}\label{observamos-que-la-mitad-de-las-ventas-se-llegan-mediante-pub
 \subsubsection{9. Registraciones de los
 usuarios}\label{registraciones-de-los-usuarios}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}25}]:} \PY{c+c1}{\PYZsh{} Tomamos la fecha de registración de los usuarios}
-         \PY{n}{nuevos} \PY{o}{=} \PY{n}{datos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{new\PYZus{}vs\PYZus{}returning}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{New}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{usuarios\PYZus{}nuevos} \PY{o}{=} \PY{n}{nuevos}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-         \PY{n}{usuarios\PYZus{}nuevos}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}registro}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-         \PY{n}{usuarios\PYZus{}nuevos}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}25}]:}       person       fecha\_registro
-         1   0004b0a2  2018-05-31 23:38:05
-         5   0006a21a  2018-05-29 13:29:26
-         9   000a54b2  2018-04-09 20:12:31
-         45  00184bf9  2018-04-06 05:12:05
-         96  0019c395  2018-05-17 00:08:56
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}26}]:} \PY{n}{usuarios\PYZus{}nuevos}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-<class 'pandas.core.frame.DataFrame'>
-Int64Index: 26898 entries, 1 to 1011284
-Data columns (total 2 columns):
-person            26898 non-null object
-fecha\_registro    26898 non-null object
-dtypes: object(2)
-memory usage: 630.4+ KB
-
-    \end{Verbatim}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}27}]:} \PY{n}{nuevas\PYZus{}registraciones} \PY{o}{=} \PY{n}{usuarios\PYZus{}nuevos}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}registro}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-         \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}registro}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{to\PYZus{}datetime}\PY{p}{(}\PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}registro}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
-         \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}registro}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dt}\PY{o}{.}\PY{n}{month}
-         \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dia}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}registro}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dt}\PY{o}{.}\PY{n}{dayofweek}
-         \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cantidad}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{1}
-         \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}
-         
-         \PY{n}{Dias} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Lunes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Martes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Miercoles}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Jueves}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Viernes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sábado}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Domingo}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{Meses} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Enero}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Febrero}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Marzo}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Abril}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Junio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Julio}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dia}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dia}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{Dias}\PY{p}{[}\PY{n}{x}\PY{p}{]}\PY{p}{)}
-         \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{nuevas\PYZus{}registraciones}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{Meses}\PY{p}{[}\PY{n}{x}\PY{p}{]}\PY{p}{)}
-         
-         
-         \PY{n}{table} \PY{o}{=} \PY{n}{nuevas\PYZus{}registraciones}\PY{o}{.}\PY{n}{pivot\PYZus{}table}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dia}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{columns}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{aggfunc}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{)}
-         \PY{n}{table}\PY{o}{.}\PY{n}{columns} \PY{o}{=} \PY{n}{table}\PY{o}{.}\PY{n}{columns}\PY{o}{.}\PY{n}{droplevel}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
-         \PY{n}{table} \PY{o}{=} \PY{n}{table}\PY{p}{[}\PY{n}{Meses}\PY{p}{]}
-         \PY{n}{table} \PY{o}{=} \PY{n}{table}\PY{o}{.}\PY{n}{reindex}\PY{p}{(}\PY{n}{index} \PY{o}{=} \PY{n}{Dias}\PY{p}{)}
-         
-         \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}semana}\PY{o}{=}\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{table}\PY{p}{,}\PY{n}{linewidths}\PY{o}{=}\PY{o}{.}\PY{l+m+mi}{5}\PY{p}{,}\PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{magma\PYZus{}r}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}semana}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Nuevos Registros por Dia de la Semana y Mes}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{22}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}semana}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mes}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}semana}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Dia de la Semana}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}semana}\PY{o}{.}\PY{n}{set\PYZus{}yticklabels}\PY{p}{(}\PY{n}{grafico\PYZus{}semana}\PY{o}{.}\PY{n}{get\PYZus{}yticklabels}\PY{p}{(}\PY{p}{)}\PY{p}{,}\PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}27}]:} [Text(0,0.5,'Lunes'),
-          Text(0,1.5,'Martes'),
-          Text(0,2.5,'Miercoles'),
-          Text(0,3.5,'Jueves'),
-          Text(0,4.5,'Viernes'),
-          Text(0,5.5,'Sábado'),
-          Text(0,6.5,'Domingo')]
-\end{Verbatim}
-            
+   
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_51_1.png}
     \end{center}
-    { \hspace*{\fill} \\}
-    
+ 
     \hypertarget{la-web-incrementuxf3-gradualmente-la-cantidad-de-usuarios-nuevos-por-mes-teniendo-su-pico-en-los-meses-de-junio-y-julio.-tambiuxe9n-se-puede-apreciar-los-duxedas-con-mayor-cantidad-de-registraciones-lunes-martes-y-miuxe9rcoles.}{%
 \subparagraph{La web incrementó gradualmente la cantidad de usuarios
 nuevos por mes, teniendo su pico en los meses de Junio y Julio. También
@@ -933,28 +501,6 @@ se puede apreciar los días con mayor cantidad de registraciones, lunes,
 martes y
 miércoles.}\label{la-web-incrementuxf3-gradualmente-la-cantidad-de-usuarios-nuevos-por-mes-teniendo-su-pico-en-los-meses-de-junio-y-julio.-tambiuxe9n-se-puede-apreciar-los-duxedas-con-mayor-cantidad-de-registraciones-lunes-martes-y-miuxe9rcoles.}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}45}]:} \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos} \PY{o}{=} \PY{n}{datos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{new\PYZus{}vs\PYZus{}returning}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{New}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos} \PY{o}{=} \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{channel}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-         \PY{n}{dias\PYZus{}por\PYZus{}mes} \PY{o}{=} \PY{p}{[}\PY{k+kc}{False}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{31}\PY{p}{,}\PY{l+m+mi}{59}\PY{p}{,}\PY{l+m+mi}{90}\PY{p}{,}\PY{l+m+mi}{120}\PY{p}{,}\PY{l+m+mi}{151}\PY{p}{]}
-         \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{to\PYZus{}datetime}\PY{p}{(}\PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
-         \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dt}\PY{o}{.}\PY{n}{month}
-         \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dia}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dt}\PY{o}{.}\PY{n}{dayofweek}
-         \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{dias\PYZus{}por\PYZus{}mes}\PY{p}{[}\PY{n}{x}\PY{p}{]}\PY{p}{)}
-         \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dia}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dia}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{+} \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Registraciones}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{0}
-         \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos} \PY{o}{=} \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{channel}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dia}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Registraciones}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PYZbs{}
-                                                                                                     \PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{p}{)}
-         \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos} \PY{o}{=} \PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{channel}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{!=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Unknown}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dia}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Registraciones}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{hue}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{channel}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{data}\PY{o}{=}\PY{n}{canales\PYZus{}usuarios\PYZus{}nuevos}\PY{p}{)}\PYZbs{}
-                                                                         \PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cantidad de registraciones por dia}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}45}]:} Text(0.5,1,'Cantidad de registraciones por dia')
-\end{Verbatim}
-            
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_53_1.png}
     \end{center}
@@ -964,90 +510,14 @@ miércoles.}\label{la-web-incrementuxf3-gradualmente-la-cantidad-de-usuarios-nue
 \subsubsection{10. Eventos de los no
 usuarios}\label{eventos-de-los-no-usuarios}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}28}]:} \PY{c+c1}{\PYZsh{} Tomamos la fecha del primer regreso a la página}
-         \PY{n}{regreso} \PY{o}{=} \PY{n}{datos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{new\PYZus{}vs\PYZus{}returning}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Returning}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{primer\PYZus{}regreso} \PY{o}{=} \PY{n}{regreso}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{drop\PYZus{}duplicates}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{usuarios\PYZus{}primer\PYZus{}regreso} \PY{o}{=} \PY{n}{primer\PYZus{}regreso}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-         \PY{n}{usuarios\PYZus{}primer\PYZus{}regreso}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}primer\PYZus{}regreso}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-         \PY{n}{usuarios\PYZus{}primer\PYZus{}regreso}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}28}]:}           person fecha\_primer\_regreso
-         543842  8b6dbd1d  2018-01-01 12:40:21
-         644817  a51a7fa8  2018-01-02 15:59:53
-         571679  9250d410  2018-01-02 19:45:05
-         41369   0b9456e3  2018-01-02 20:40:38
-         796576  cbaee231  2018-01-03 03:59:38
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}29}]:} \PY{c+c1}{\PYZsh{} Mergeamos las fechas}
-         \PY{n}{usuarios\PYZus{}nuevos} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{merge}\PY{p}{(}\PY{n}{usuarios\PYZus{}nuevos}\PY{p}{,}\PY{n}{usuarios\PYZus{}primer\PYZus{}regreso}\PY{p}{,}\PY{n}{on}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{how}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{left}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{usuarios\PYZus{}nuevos}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}29}]:}      person       fecha\_registro fecha\_primer\_regreso
-         0  0004b0a2  2018-05-31 23:38:05                  NaN
-         1  0006a21a  2018-05-29 13:29:26                  NaN
-         2  000a54b2  2018-04-09 20:12:31  2018-05-24 11:21:07
-         3  00184bf9  2018-04-06 05:12:05  2018-05-04 18:47:03
-         4  0019c395  2018-05-17 00:08:56                  NaN
-\end{Verbatim}
-            
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}30}]:} \PY{c+c1}{\PYZsh{} Tomamos los id de las personas que no se volvieron a logear}
-         \PY{n}{usuarios\PYZus{}nuevos}\PY{o}{.}\PY{n}{fillna}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{empty}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-         \PY{n}{usuarios\PYZus{}casuales} \PY{o}{=} \PY{n}{usuarios\PYZus{}nuevos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{usuarios\PYZus{}nuevos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}primer\PYZus{}regreso}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{empty}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{usuarios\PYZus{}casuales}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}registro}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}primer\PYZus{}regreso}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-\end{Verbatim}
-
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}31}]:} \PY{c+c1}{\PYZsh{}Agregamos las fechas al dataframe datos}
-         \PY{n}{datos\PYZus{}fechas\PYZus{}importantes} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{merge}\PY{p}{(}\PY{n}{datos}\PY{p}{,}\PY{n}{usuarios\PYZus{}nuevos}\PY{p}{,}\PY{n}{on}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{how}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{inner}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}32}]:} \PY{c+c1}{\PYZsh{} Nos quedamos con los eventos previos a la fecha de registro.}
-         \PY{n}{primeros\PYZus{}pasos} \PY{o}{=} \PY{n}{datos\PYZus{}fechas\PYZus{}importantes}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{datos\PYZus{}fechas\PYZus{}importantes}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PYZbs{}
-                                                       \PY{o}{\PYZlt{}}\PY{o}{=}\PY{n}{datos\PYZus{}fechas\PYZus{}importantes}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}registro}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-         \PY{c+c1}{\PYZsh{} Sacamos los visited site que significan registros nuevos. Se pierden cerca de 3000 usuarios,}
-         \PY{c+c1}{\PYZsh{} que no poseen información de los eventos previos al registro.}
-         \PY{c+c1}{\PYZsh{} No se hizo en el paso anterior porque hay eventos que comparten la misma hora que la fecha de registro.}
-         \PY{n}{primeros\PYZus{}pasos} \PY{o}{=} \PY{n}{primeros\PYZus{}pasos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{primeros\PYZus{}pasos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{new\PYZus{}vs\PYZus{}returning}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{!=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{New}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{us} \PY{o}{=} \PY{n}{primeros\PYZus{}pasos}\PY{o}{.}\PY{n}{drop\PYZus{}duplicates}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Usuarios con eventos previos al registro: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{us}\PY{o}{.}\PY{n}{person}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Usuarios totales: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{usuarios\PYZus{}nuevos}\PY{o}{.}\PY{n}{person}\PY{o}{.}\PY{n}{count}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
+    
 Usuarios con eventos previos al registro:  24022 
 
 Usuarios totales:  26898
-
     \end{Verbatim}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}33}]:} \PY{n}{top\PYZus{}eventos}\PY{o}{=}\PY{n}{primeros\PYZus{}pasos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}top\PYZus{}avisos}\PY{o}{=}\PY{n}{sns}\PY{o}{.}\PY{n}{barplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{top\PYZus{}eventos}\PY{o}{.}\PY{n}{values}\PY{p}{,}\PY{n}{y}\PY{o}{=}\PY{n}{top\PYZus{}eventos}\PY{o}{.}\PY{n}{index}\PY{p}{,}\PY{n}{orient}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{h}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{palette}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{magma}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}top\PYZus{}avisos}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Eventos de los no usuarios}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}top\PYZus{}avisos}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cantidad de Eventos}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{12}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}top\PYZus{}avisos}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Eventos}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{12}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}33}]:} Text(0,0.5,'Eventos')
-\end{Verbatim}
-            
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_60_1.png}
     \end{center}
@@ -1058,62 +528,19 @@ Usuarios totales:  26898
 principales eventos de los no registrados a la
 web.}\label{las-campauxf1as-de-avisos-online-y-los-buscadores-son-los-principales-eventos-de-los-no-registrados-a-la-web.}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}42}]:} \PY{c+c1}{\PYZsh{} Eliminamos los eventos repetidos de cada persona}
-         \PY{c+c1}{\PYZsh{} Los eventos quedaran ordenados por tiempo de aparición}
-         
-         \PY{n}{primeros\PYZus{}pasos} \PY{o}{=} \PY{n}{primeros\PYZus{}pasos}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{by}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-         \PY{n}{primeros\PYZus{}pasos\PYZus{}eventos} \PY{o}{=} \PY{n}{primeros\PYZus{}pasos}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-         
-         \PY{c+c1}{\PYZsh{} Creamos un diccionario del estilo \PYZob{}persona:[eventos\PYZus{}realizados]\PYZcb{}}
-         \PY{n}{dic\PYZus{}person\PYZus{}event} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
-         \PY{k}{for} \PY{n}{index}\PY{p}{,} \PY{n}{row} \PY{o+ow}{in} \PY{n}{primeros\PYZus{}eventos}\PY{o}{.}\PY{n}{iterrows}\PY{p}{(}\PY{p}{)}\PY{p}{:}
-             \PY{n}{evento} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-             \PY{n}{persona} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-             \PY{k}{if} \PY{p}{(}\PY{n}{persona} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{dic\PYZus{}person\PYZus{}event}\PY{p}{)}\PY{p}{:}
-                 \PY{n}{dic\PYZus{}person\PYZus{}event}\PY{p}{[}\PY{n}{persona}\PY{p}{]} \PY{o}{=} \PY{p}{[}\PY{n}{evento}\PY{p}{]}
-             \PY{k}{else}\PY{p}{:}
-                 \PY{c+c1}{\PYZsh{}if (evento not in dic\PYZus{}person\PYZus{}event[persona]):}
-                     \PY{n}{dic\PYZus{}person\PYZus{}event}\PY{p}{[}\PY{n}{persona}\PY{p}{]}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{evento}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}43}]:} \PY{c+c1}{\PYZsh{} Iteramos sobre el diccionario, armando otro con la cantidad de apariciones de cada combinación de eventos}
-         \PY{n}{dic\PYZus{}eventos} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
-         \PY{k}{for} \PY{n+nb}{id} \PY{o+ow}{in} \PY{n}{dic\PYZus{}person\PYZus{}event}\PY{p}{:}
-             \PY{n}{eventos} \PY{o}{=} \PY{n}{dic\PYZus{}person\PYZus{}event}\PY{p}{[}\PY{n+nb}{id}\PY{p}{]}
-             \PY{n}{evento} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ | }\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{eventos}\PY{p}{)}
-             \PY{k}{if} \PY{p}{(}\PY{n}{evento} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{dic\PYZus{}eventos}\PY{p}{)}\PY{p}{:}
-                 \PY{n}{dic\PYZus{}eventos}\PY{p}{[}\PY{n}{evento}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{1}
-             \PY{k}{else}\PY{p}{:}
-                 \PY{n}{dic\PYZus{}eventos}\PY{p}{[}\PY{n}{evento}\PY{p}{]} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
-         
-         \PY{n}{df\PYZus{}eventos} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{dic\PYZus{}eventos}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eventos}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cantidad}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
-         \PY{n}{df\PYZus{}eventos} \PY{o}{=} \PY{n}{df\PYZus{}eventos}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{by}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cantidad}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{p}{)}
-         \PY{n}{df\PYZus{}eventos} \PY{o}{=} \PY{n}{df\PYZus{}eventos}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eventos}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cantidad}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-\end{Verbatim}
-
-
+   
     \hypertarget{trace-de-los-eventos-de-los-no-registrados-antes-de-ser-hacerse-nuevos-usuarios}{%
 \paragraph{Trace de los eventos de los no registrados antes de ser
 hacerse nuevos
 usuarios}\label{trace-de-los-eventos-de-los-no-registrados-antes-de-ser-hacerse-nuevos-usuarios}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}44}]:} \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Total : }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{df\PYZus{}eventos}\PY{o}{.}\PY{n}{cantidad}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-         \PY{n}{df\PYZus{}eventos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{porcentage}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{df\PYZus{}eventos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cantidad}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{/} \PY{n}{df\PYZus{}eventos}\PY{o}{.}\PY{n}{cantidad}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)} \PY{o}{*} \PY{l+m+mi}{100}
-         \PY{n}{df\PYZus{}eventos}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}
-\end{Verbatim}
-
 
     \begin{Verbatim}[commandchars=\\\{\}]
 Total :  24022
-
     \end{Verbatim}
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}44}]:}                                              eventos  cantidad  porcentage
+                                                    eventos    cantidad   porcentage
          0                                    ad campaign hit      4410   18.358172
          1                                  search engine hit      2590   10.781783
          2                ad campaign hit | search engine hit      1747    7.272500
@@ -1123,7 +550,7 @@ Total :  24022
          6                                    generic listing      1272    5.295146
          7                generic listing | search engine hit      1210    5.037049
          8                search engine hit | generic listing      1071    4.458413
-         9  generic listing | search engine hit | ad campa{\ldots}       530    2.206311
+         9  generic listing | search engine hit | ad campaign       530    2.206311
 \end{Verbatim}
             
     \hypertarget{observamos-que-aproximadamente-un-18-de-los-usuarios-se-registra-directamente-luego-de-entrar-a-la-puxe1gina-por-una-campauxf1a-de-marketing-y-el-10-luego-de-haber-entrado-por-el-buscador}{%
@@ -1132,29 +559,12 @@ registra directamente luego de entrar a la página por una campaña de
 marketing y el \%10 luego de haber entrado por el
 buscador}\label{observamos-que-aproximadamente-un-18-de-los-usuarios-se-registra-directamente-luego-de-entrar-a-la-puxe1gina-por-una-campauxf1a-de-marketing-y-el-10-luego-de-haber-entrado-por-el-buscador}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}37}]:} \PY{n}{values} \PY{o}{=} \PY{n}{primeros\PYZus{}pasos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{primeros\PYZus{}pasos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ad campaign hit}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{values}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{campaign\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{n}{sort}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{o}{.}\PY{n}{bar}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}\PY{p}{;}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Campaña de marketing online}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}\PY{p}{;}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cantidad de clicks en las campañas}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Campañas de Marketing que originaron Usuarios}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}\PY{p}{;}
-\end{Verbatim}
-
-
+   
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_67_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}38}]:} \PY{n}{values} \PY{o}{=} \PY{n}{primeros\PYZus{}pasos}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{primeros\PYZus{}pasos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{search engine hit}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-         \PY{n}{values}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{search\PYZus{}engine}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{n}{sort}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{o}{.}\PY{n}{bar}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}\PY{p}{;}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Buscadores}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}\PY{p}{;}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cantidad de clicks en los buscadores}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Buscadores que originaron Usuarios}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}\PY{p}{;}
-\end{Verbatim}
-
-
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_68_0.png}
     \end{center}
@@ -1169,69 +579,6 @@ marketing.}\label{se-puede-observar-que-las-campauxf1as-marketing-de-google-y-su
     \hypertarget{primer-sesiuxf3n-de-los-usuarios-activos-y-casuales}{%
 \subsubsection{11. Primer sesión de los usuarios activos y
 casuales}\label{primer-sesiuxf3n-de-los-usuarios-activos-y-casuales}}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}39}]:} \PY{c+c1}{\PYZsh{}Nos quedamos con la primer sesion de los usuarios activos y casuales luego del registro en la web}
-         \PY{n}{primer\PYZus{}sesion} \PY{o}{=} \PY{n}{datos\PYZus{}fechas\PYZus{}importantes}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{p}{(}\PY{n}{datos\PYZus{}fechas\PYZus{}importantes}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{\PYZgt{}}\PY{n}{datos\PYZus{}fechas\PYZus{}importantes}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}registro}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PYZbs{}
-                                                     \PY{o}{\PYZam{}} \PY{p}{(} \PY{p}{(}\PY{n}{datos\PYZus{}fechas\PYZus{}importantes}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{\PYZlt{}}\PY{n}{datos\PYZus{}fechas\PYZus{}importantes}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}primer\PYZus{}regreso}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PYZbs{}
-                                                       \PY{o}{|} \PY{p}{(}\PY{n}{datos\PYZus{}fechas\PYZus{}importantes}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}primer\PYZus{}regreso}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{empty}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{p}{)}\PY{p}{]}
-         \PY{n}{primer\PYZus{}sesion}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-<class 'pandas.core.frame.DataFrame'>
-Int64Index: 267472 entries, 2 to 1008789
-Data columns (total 25 columns):
-timestamp                   267472 non-null object
-event                       267472 non-null object
-person                      267472 non-null object
-url                         15174 non-null object
-sku                         175334 non-null float64
-model                       175367 non-null object
-condition                   175334 non-null object
-storage                     175334 non-null object
-color                       175334 non-null object
-skus                        65417 non-null object
-search\_term                 16450 non-null object
-staticpage                  726 non-null object
-campaign\_source             15183 non-null object
-search\_engine               10664 non-null object
-channel                     0 non-null object
-new\_vs\_returning            0 non-null object
-city                        0 non-null object
-region                      0 non-null object
-country                     0 non-null object
-device\_type                 0 non-null object
-screen\_resolution           0 non-null object
-operating\_system\_version    0 non-null object
-browser\_version             0 non-null object
-fecha\_registro              267472 non-null object
-fecha\_primer\_regreso        267472 non-null object
-dtypes: float64(1), object(24)
-memory usage: 53.1+ MB
-
-    \end{Verbatim}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}40}]:} \PY{n}{primer\PYZus{}nuevos\PYZus{}casuales} \PY{o}{=} \PY{n}{primer\PYZus{}sesion}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}primer\PYZus{}regreso}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-         \PY{n}{primer\PYZus{}nuevos\PYZus{}casuales}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{fecha\PYZus{}primer\PYZus{}regreso}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{user\PYZus{}type}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-         \PY{n}{primer\PYZus{}nuevos\PYZus{}casuales}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{p}{(}\PY{n}{primer\PYZus{}nuevos\PYZus{}casuales}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{user\PYZus{}type}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{!=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{empty}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{user\PYZus{}type}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Usuario Activo}\PY{l+s+s1}{\PYZsq{}}
-         \PY{n}{primer\PYZus{}nuevos\PYZus{}casuales}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{p}{(}\PY{n}{primer\PYZus{}nuevos\PYZus{}casuales}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{user\PYZus{}type}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{empty}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{user\PYZus{}type}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Usuario Casual}\PY{l+s+s1}{\PYZsq{}}
-         
-         \PY{n}{primer\PYZus{}nuevos\PYZus{}casuales}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{1}
-         \PY{n}{table} \PY{o}{=} \PY{n}{primer\PYZus{}nuevos\PYZus{}casuales}\PY{o}{.}\PY{n}{pivot\PYZus{}table}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{columns}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{user\PYZus{}type}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{aggfunc}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{)}
-         \PY{n}{table}\PY{o}{.}\PY{n}{columns} \PY{o}{=} \PY{n}{table}\PY{o}{.}\PY{n}{columns}\PY{o}{.}\PY{n}{droplevel}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
-         \PY{n}{table}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{level}\PY{o}{=}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}\PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-         \PY{n}{table} \PY{o}{=} \PY{n}{table}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Usuario Activo}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}comp\PYZus{}post\PYZus{}vista}\PY{o}{=}\PY{n}{table}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{kind}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bar}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{12}\PY{p}{,}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{,}\PY{n}{rot}\PY{o}{=}\PY{l+m+mi}{70}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}comp\PYZus{}post\PYZus{}vista}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cantidad de eventos por tipo de usuario en su primer sesión a la web}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}comp\PYZus{}post\PYZus{}vista}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Eventos}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{12}\PY{p}{)}
-         \PY{n}{grafico\PYZus{}comp\PYZus{}post\PYZus{}vista}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cantidad de eventos primera sesión}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{12}\PY{p}{)}
-         \PY{n}{leyenda}\PY{o}{=}\PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Usuarios activos}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Usuarios casuales}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{12}\PY{p}{,}\PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Tipo}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{frameon}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,}\PY{n}{facecolor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{white}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{edgecolor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{black}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{leyenda}\PY{o}{.}\PY{n}{get\PYZus{}frame}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{set\PYZus{}linewidth}\PY{p}{(}\PY{l+m+mf}{1.0}\PY{p}{)}
-\end{Verbatim}
-
 
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_72_0.png}
@@ -1250,19 +597,6 @@ conversiones.}\label{podemos-notar-una-similitud-en-los-eventos-de-ambos-tipos-d
 \subsubsection{12. Términos más utilizados en las
 búsquedas}\label{tuxe9rminos-muxe1s-utilizados-en-las-buxfasquedas}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}41}]:} \PY{n}{words} \PY{o}{=} \PY{n}{datos}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{search\PYZus{}term}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{p}{)}
-         \PY{n}{words} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{words}\PY{p}{)}
-         
-         \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
-         \PY{n}{wordcloud} \PY{o}{=} \PY{n}{WordCloud}\PY{p}{(}\PY{n}{width}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{,}\PY{n}{height}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{,} \PY{n}{margin}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,}\PY{n}{colormap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Blues}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{generate}\PY{p}{(}\PY{n}{words}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{imshow}\PY{p}{(}\PY{n}{wordcloud}\PY{p}{,} \PY{n}{interpolation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bilinear}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{axis}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{off}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{margins}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-
-
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_75_0.png}
     \end{center}
@@ -1278,23 +612,6 @@ Motorola.}\label{observamos-que-lo-muxe1s-buscado-es-la-marca-de-celulares-de-ap
 \subsubsection{13. Relacion entre los
 eventos}\label{relacion-entre-los-eventos}}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}46}]:} \PY{n}{eventos\PYZus{}x\PYZus{}person} \PY{o}{=} \PY{n}{datos}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-         \PY{n}{eventos\PYZus{}x\PYZus{}person} \PY{o}{=} \PY{n}{eventos\PYZus{}x\PYZus{}person}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{person}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{event}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{agg}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{count}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{)}
-         \PY{n}{eventos\PYZus{}x\PYZus{}person} \PY{o}{=} \PY{n}{eventos\PYZus{}x\PYZus{}person}\PY{o}{.}\PY{n}{unstack}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
-         \PY{n}{eventos\PYZus{}x\PYZus{}person}\PY{o}{.}\PY{n}{columns} \PY{o}{=} \PY{n}{eventos\PYZus{}x\PYZus{}person}\PY{o}{.}\PY{n}{columns}\PY{o}{.}\PY{n}{droplevel}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
-         \PY{n}{eventos\PYZus{}x\PYZus{}person} \PY{o}{=} \PY{n}{eventos\PYZus{}x\PYZus{}person}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{level}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
-         \PY{n}{eventos\PYZus{}x\PYZus{}person} \PY{o}{=} \PY{n}{eventos\PYZus{}x\PYZus{}person}\PY{o}{.}\PY{n}{fillna}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
-         \PY{n}{corrmat} \PY{o}{=} \PY{n}{eventos\PYZus{}x\PYZus{}person}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{n}{method}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{spearman}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{f}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
-         \PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{corrmat}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{YlGnBu}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{linewidths}\PY{o}{=}\PY{l+m+mf}{0.1}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}46}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x7f29bb8f9e10>
-\end{Verbatim}
-            
     \begin{center}
     \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_78_1.png}
     \end{center}
